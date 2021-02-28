@@ -2,3 +2,4 @@ spring:
   kafka:
     consumer:
       group-id: "default-spring-consumer"
+      enable-auto-commit: true

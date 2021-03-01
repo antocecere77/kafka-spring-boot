@@ -17,7 +17,7 @@ public class FixedRateProducer {
 
     private int i = 0;
 
-    @Scheduled(fixedRate = 1000)
+    //@Scheduled(fixedRate = 1000)
     public void sendMessage() {
         i++;
         log.info("i is " + i);

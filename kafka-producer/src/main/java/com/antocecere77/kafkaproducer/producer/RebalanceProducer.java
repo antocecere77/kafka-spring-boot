@@ -13,7 +13,7 @@ public class RebalanceProducer {
 
     private int i = 0;
 
-    @Scheduled(fixedRate = 1000)
+    //@Scheduled(fixedRate = 1000)
     public void sendMessage() {
         i++;
         kafkaTemplate.send("t_rebalance", "Counter is " + i);

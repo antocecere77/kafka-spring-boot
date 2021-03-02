@@ -25,9 +25,9 @@ public class KafkaProducerApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		for (int i = 0; i < 5; i++) {
-			var employee = new Employee("emp-" + 1, "Employee " + i, LocalDate.now());
-			employeeJsonProducer.sendMessage(employee);
-		}
+//		for (int i = 0; i < 5; i++) {
+//			var employee = new Employee("emp-" + 1, "Employee " + i, LocalDate.now());
+//			employeeJsonProducer.sendMessage(employee);
+//		}
 	}
 }

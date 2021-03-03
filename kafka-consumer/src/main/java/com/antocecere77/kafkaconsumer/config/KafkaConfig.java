@@ -1,6 +1,7 @@
 package com.antocecere77.kafkaconsumer.config;
 
 import com.antocecere77.kafkaconsumer.entity.CarLocation;
+import com.antocecere77.kafkaconsumer.error.handler.GlobalErrorHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -51,6 +52,18 @@ public class KafkaConfig {
                 }
             }
         });
+
+        return factory;
+    }
+
+    @Bean(name = "kafkaListenerContainerFactory")
+    public ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerContainerFactory(
+            ConcurrentKafkaListenerContainerFactoryConfigurer configurer) {
+
+        var factory = new ConcurrentKafkaListenerContainerFactory<Object, Object>();
+        configurer.configure(factory, consumerFactory());
+
+        factory.setErrorHandler(new GlobalErrorHandler());
 
         return factory;
     }

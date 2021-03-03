@@ -16,6 +16,10 @@ public class FoodErrorHandler implements ConsumerAwareListenerErrorHandler {
     @Override
     public Object handleError(Message<?> message, ListenerExecutionFailedException e, Consumer<?, ?> consumer) {
         log.warn("Found order error. Pretending to send to elasticsearch: {}, because: {} ", message.getPayload(), e.getMessage());
+
+        if(e.getCause() instanceof RuntimeException) {
+            throw e;
+        }
         return null;
     }
 

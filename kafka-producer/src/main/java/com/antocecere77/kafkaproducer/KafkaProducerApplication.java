@@ -2,10 +2,8 @@ package com.antocecere77.kafkaproducer;
 
 import com.antocecere77.kafkaproducer.entity.Employee;
 import com.antocecere77.kafkaproducer.entity.FoodOrder;
-import com.antocecere77.kafkaproducer.producer.EmployeeJsonProducer;
-import com.antocecere77.kafkaproducer.producer.FoodOrderProducer;
-import com.antocecere77.kafkaproducer.producer.HelloKakfaProducer;
-import com.antocecere77.kafkaproducer.producer.KafkaKeyProducer;
+import com.antocecere77.kafkaproducer.entity.SimpleNumber;
+import com.antocecere77.kafkaproducer.producer.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,6 +19,9 @@ public class KafkaProducerApplication implements CommandLineRunner {
 	@Autowired
 	private FoodOrderProducer foodOrderProducer;
 
+	@Autowired
+	private SimpleNumberProducer simpleNumberProducer;
+
 	public static void main(String[] args) {
 		SpringApplication.run(KafkaProducerApplication.class, args);
 	}
@@ -35,5 +36,10 @@ public class KafkaProducerApplication implements CommandLineRunner {
 		foodOrderProducer.send(chickenOrder);
 		foodOrderProducer.send(fishOrder);
 		foodOrderProducer.send(pizzaOrder);
+
+		for (int i = 100; i < 103; i++) {
+			var simpleNumber = new SimpleNumber(i);
+			simpleNumberProducer.send(simpleNumber);
+		}
 	}
 }

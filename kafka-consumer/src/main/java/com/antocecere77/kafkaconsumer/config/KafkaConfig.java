@@ -15,6 +15,9 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.adapter.RecordFilterStrategy;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 
 @Configuration
 public class KafkaConfig {
@@ -66,6 +69,32 @@ public class KafkaConfig {
         factory.setErrorHandler(new GlobalErrorHandler());
 
         return factory;
+    }
+
+    @Bean(name = "imageRetryContainerFactory")
+    public ConcurrentKafkaListenerContainerFactory<Object, Object> imageRetryContainerFactory(
+            ConcurrentKafkaListenerContainerFactoryConfigurer configurer) {
+
+        var factory = new ConcurrentKafkaListenerContainerFactory<Object, Object>();
+        configurer.configure(factory, consumerFactory());
+
+        factory.setErrorHandler(new GlobalErrorHandler());
+        factory.setRetryTemplate(createRetryTemplate());
+
+        return factory;
+    }
+
+    private RetryTemplate createRetryTemplate() {
+
+        var retryTemplate = new RetryTemplate();
+        var retryPolicy = new SimpleRetryPolicy((3));
+        retryTemplate.setRetryPolicy(retryPolicy);
+
+        var backoffPolicy = new FixedBackOffPolicy();
+        backoffPolicy.setBackOffPeriod(10_000);
+
+        retryTemplate.setBackOffPolicy(backoffPolicy);
+        return retryTemplate;
     }
 
 }

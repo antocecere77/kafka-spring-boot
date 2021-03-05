@@ -4,6 +4,7 @@ import com.antocecere77.kafkaproducer.entity.Employee;
 import com.antocecere77.kafkaproducer.entity.FoodOrder;
 import com.antocecere77.kafkaproducer.entity.SimpleNumber;
 import com.antocecere77.kafkaproducer.producer.*;
+import com.antocecere77.kafkaproducer.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,10 +18,10 @@ import java.time.LocalDate;
 public class KafkaProducerApplication implements CommandLineRunner {
 
 	@Autowired
-	private FoodOrderProducer foodOrderProducer;
+	private ImageService imageService;
 
 	@Autowired
-	private SimpleNumberProducer simpleNumberProducer;
+	private ImageProducer imageProducer;
 
 	public static void main(String[] args) {
 		SpringApplication.run(KafkaProducerApplication.class, args);
@@ -29,17 +30,25 @@ public class KafkaProducerApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		var chickenOrder = new FoodOrder(3, "Chicken");
-		var fishOrder = new FoodOrder(10, "Fish");
-		var pizzaOrder = new FoodOrder(5, "Pizza");
+		var image1 = imageService.generateImage("jpg") ;
+		var image2 = imageService.generateImage("svg") ;
+		var image3 = imageService.generateImage("png") ;
 
-		foodOrderProducer.send(chickenOrder);
-		foodOrderProducer.send(fishOrder);
-		foodOrderProducer.send(pizzaOrder);
-
-		for (int i = 100; i < 103; i++) {
-			var simpleNumber = new SimpleNumber(i);
-			simpleNumberProducer.send(simpleNumber);
-		}
+		imageProducer.sendMessage(image1);
+		imageProducer.sendMessage(image2);
+		imageProducer.sendMessage(image3);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

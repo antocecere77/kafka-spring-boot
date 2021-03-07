@@ -18,6 +18,7 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<apacheCommonsLang3Version>3.10</apacheCommonsLang3Version>
 	</properties>
 
 	<dependencies>
@@ -51,6 +52,12 @@
 			<artifactId>lombok</artifactId>
 			<version>1.18.16</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${apacheCommonsLang3Version}</version>
 		</dependency>
 
 		<dependency>

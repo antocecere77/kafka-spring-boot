@@ -1,6 +1,7 @@
 package com.antocecere77.kafka.broker.stream.promotion;
 
 import com.antocecere77.kafka.broker.message.PromotionMessage;
+import com.antocecere77.kafka.broker.serde.PromotionSerde;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -13,13 +14,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
 @Slf4j
-//@Configuration
-public class PromotionUppercaseSpringJsonStream {
+@Configuration
+public class PromotionUppercaseCustomJsonStream {
 
     @Bean
     public KStream<String, PromotionMessage> kStreamPromotionUppercase(StreamsBuilder builder) {
         var stringSerde = Serdes.String();
-        var jsonSerde = new JsonSerde<>(PromotionMessage.class);
+        var jsonSerde = new PromotionSerde();
 
         KStream<String, PromotionMessage> sourceStream = builder.stream("t.commodity.promotion",
                 Consumed.with(stringSerde, jsonSerde));
@@ -28,8 +29,8 @@ public class PromotionUppercaseSpringJsonStream {
         uppercaseStream.to("t.commodity.promotion-uppercase", Produced.with(stringSerde, jsonSerde));
 
         // useful for debugging, but don't do this on production
-        sourceStream.print(Printed.<String, PromotionMessage>toSysOut().withLabel("Json Serde Original Stream"));
-        uppercaseStream.print(Printed.<String, PromotionMessage>toSysOut().withLabel("Json Serde Original Stream"));
+        sourceStream.print(Printed.<String, PromotionMessage>toSysOut().withLabel("Custom Json Serde Original Stream"));
+        uppercaseStream.print(Printed.<String, PromotionMessage>toSysOut().withLabel("Custom Json Serde Original Stream"));
 
         return sourceStream;
     }

@@ -1,0 +1,29 @@
+package com.antocecere77.kafka.broker.serde;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.SerializationException;
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.Serializer;
+
+import java.io.IOException;
+import java.util.Objects;
+
+public class CustomJsonDeserializer<T> implements Deserializer<T> {
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private final Class<T> deserializerClass;
+
+    public CustomJsonDeserializer(Class<T> deserializedClass) {
+        Objects.requireNonNull(deserializedClass, "Deserialized class must not null");
+        this.deserializerClass = deserializedClass;
+    }
+
+    @Override
+    public T deserialize(String topic, byte[] data) {
+        try {
+            return objectMapper.readValue(data, deserializerClass);
+        } catch (IOException e) {
+            throw new SerializationException(e);
+        }
+    }
+}

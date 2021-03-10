@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class OrderMessage {
-
-    private String creditCardNumber;
+@AllArgsConstructor
+public class OrderPatternMessage {
 
     private String itemName;
+
+    private long totalItemAmount;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -28,20 +28,4 @@ public class OrderMessage {
     private String orderLocation;
 
     private String orderNumber;
-
-    private int price;
-
-    private int quantity;
-
-    public OrderMessage copy() {
-        return OrderMessage.builder()
-                .creditCardNumber(this.creditCardNumber)
-                .itemName(this.itemName)
-                .orderDateTime(this.orderDateTime)
-                .orderLocation(this.orderLocation)
-                .price(this.price)
-                .quantity(this.quantity)
-                .orderNumber(this.orderNumber)
-                .build();
-    }
 }

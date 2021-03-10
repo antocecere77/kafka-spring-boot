@@ -15,9 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderMessage {
-
-    private String creditCardNumber;
+public class OrderRewardMessage {
 
     private String itemName;
 
@@ -33,15 +31,4 @@ public class OrderMessage {
 
     private int quantity;
 
-    public OrderMessage copy() {
-        return OrderMessage.builder()
-                .creditCardNumber(this.creditCardNumber)
-                .itemName(this.itemName)
-                .orderDateTime(this.orderDateTime)
-                .orderLocation(this.orderLocation)
-                .price(this.price)
-                .quantity(this.quantity)
-                .orderNumber(this.orderNumber)
-                .build();
-    }
 }

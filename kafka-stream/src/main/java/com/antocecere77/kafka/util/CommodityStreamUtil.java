@@ -4,6 +4,7 @@ import com.antocecere77.kafka.broker.message.OrderMessage;
 import com.antocecere77.kafka.broker.message.OrderPatternMessage;
 import com.antocecere77.kafka.broker.message.OrderRewardMessage;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.Named;
 import org.apache.kafka.streams.kstream.Predicate;
@@ -65,4 +66,7 @@ public class CommodityStreamUtil {
         return (key, value) -> Base64.getEncoder().encodeToString(value.getOrderNumber().getBytes());
     }
 
+    public static KeyValueMapper<String, OrderMessage, KeyValue<String, OrderRewardMessage>> mapToOrderRewardChangeKey() {
+        return (key, value) -> KeyValue.pair(value.getOrderLocation(), mapToOrderReward(value));
+    }
 }

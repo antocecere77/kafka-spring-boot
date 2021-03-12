@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
-@Configuration
+//@Configuration
 public class FeedbackTwoStream {
 
     private static final Set<String> GOOD_WORDS = Set.of("happy", "good", "helpful");

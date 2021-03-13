@@ -18,8 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
-//@Configuration
-public class FeedbackFiveStream {
+@Configuration
+public class FeedbackSixStream {
 
     private static final Set<String> BAD_WORDS = Set.of("angry", "sad", "bad");
     private static final Set<String> GOOD_WORDS = Set.of("happy", "good", "helpful");
@@ -34,10 +34,16 @@ public class FeedbackFiveStream {
 
         var feedbackStreams = sourceStream.flatMap(splitWords()).branch(isGoodWord(), isBadWord());
 
-        feedbackStreams[0].through("t.commodity.feedback-five-good").groupByKey().count().toStream()
-                .to("t.commodity.feedback-five-good-count");
-        feedbackStreams[1].through("t.commodity.feedback-five-bad").groupByKey().count().toStream()
-                .to("t.commodity.feedback-five-bad-count");
+        feedbackStreams[0].through("t.commodity.feedback-six-good").groupByKey().count().toStream()
+                .to("t.commodity.feedback-six-good-count");
+        feedbackStreams[1].through("t.commodity.feedback-six-bad").groupByKey().count().toStream()
+                .to("t.commodity.feedback-six-bad-count");
+
+        // additional requirement
+        feedbackStreams[0].groupBy((key, value) -> value).count().toStream()
+                .to("t.commodity.feedback-six-good-count-word");
+        feedbackStreams[1].groupBy((key, value) -> value).count().toStream()
+                .to("t.commodity.feedback-six-bad-count-word");
 
         return sourceStream;
     }
@@ -55,4 +61,5 @@ public class FeedbackFiveStream {
                 .asList(value.getFeedback().replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+")).stream()
                 .distinct().map(word -> KeyValue.pair(value.getLocation(), word)).collect(toList());
     }
+
 }

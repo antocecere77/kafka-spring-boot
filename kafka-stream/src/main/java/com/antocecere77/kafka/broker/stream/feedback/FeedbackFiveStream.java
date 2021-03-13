@@ -1,5 +1,11 @@
 package com.antocecere77.kafka.broker.stream.feedback;
 
+
+import static java.util.stream.Collectors.toList;
+
+import java.util.Arrays;
+import java.util.Set;
+
 import com.antocecere77.kafka.broker.message.FeedbackMessage;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
@@ -12,13 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
-import java.util.Arrays;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
-
-//@Configuration
-public class FeedbackFourStream {
+@Configuration
+public class FeedbackFiveStream {
 
     private static final Set<String> BAD_WORDS = Set.of("angry", "sad", "bad");
     private static final Set<String> GOOD_WORDS = Set.of("happy", "good", "helpful");
@@ -33,11 +34,10 @@ public class FeedbackFourStream {
 
         var feedbackStreams = sourceStream.flatMap(splitWords()).branch(isGoodWord(), isBadWord());
 
-        feedbackStreams[0].to("t.commodity.feedback-four-good");
-        feedbackStreams[0].groupByKey().count().toStream().to("t.commodity.feedback-four-good-count");
-
-        feedbackStreams[1].to("t.commodity.feedback-four-bad");
-        feedbackStreams[1].groupByKey().count().toStream().to("t.commodity.feedback-four-bad-count");
+        feedbackStreams[0].through("t.commodity.feedback-five-good").groupByKey().count().toStream()
+                .to("t.commodity.feedback-five-good-count");
+        feedbackStreams[1].through("t.commodity.feedback-five-bad").groupByKey().count().toStream()
+                .to("t.commodity.feedback-five-bad-count");
 
         return sourceStream;
     }

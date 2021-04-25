@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
-@Configuration
+//@Configuration
 public class FeedbackSixStream {
 
     private static final Set<String> BAD_WORDS = Set.of("angry", "sad", "bad");

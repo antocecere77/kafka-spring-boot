@@ -18,8 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
-//@Configuration
-public class OrderPaymentTwoStream {
+@Configuration
+public class OrderPaymentThreeStream {
 
 	@Bean
 	public KStream<String, OnlineOrderMessage> kstreamOrderPayment(StreamsBuilder builder) {
@@ -35,9 +35,9 @@ public class OrderPaymentTwoStream {
 
 		// join
 		orderStream
-				.leftJoin(paymentStream, this::joinOrderPayment, JoinWindows.of(Duration.ofHours(1)),
+				.outerJoin(paymentStream, this::joinOrderPayment, JoinWindows.of(Duration.ofHours(1)),
 						StreamJoined.with(stringSerde, orderSerde, paymentSerde))
-				.to("t.commodity.join-order-payment-two", Produced.with(stringSerde, orderPaymentSerde));
+				.to("t.commodity.join-order-payment-three", Produced.with(stringSerde, orderPaymentSerde));
 
 		return orderStream;
 	}
@@ -45,10 +45,12 @@ public class OrderPaymentTwoStream {
 	private OnlineOrderPaymentMessage joinOrderPayment(OnlineOrderMessage order, OnlinePaymentMessage payment) {
 		var result = new OnlineOrderPaymentMessage();
 
-		result.setOnlineOrderNumber(order.getOnlineOrderNumber());
-		result.setOrderDateTime(order.getOrderDateTime());
-		result.setTotalAmount(order.getTotalAmount());
-		result.setUsername(order.getUsername());
+		if (order != null) {
+			result.setOnlineOrderNumber(order.getOnlineOrderNumber());
+			result.setOrderDateTime(order.getOrderDateTime());
+			result.setTotalAmount(order.getTotalAmount());
+			result.setUsername(order.getUsername());
+		}
 
 		if (payment != null) {
 			result.setPaymentDateTime(payment.getPaymentDateTime());

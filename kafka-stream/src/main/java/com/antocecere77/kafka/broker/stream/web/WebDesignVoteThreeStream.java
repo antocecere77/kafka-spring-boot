@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
-//@Configuration
-public class WebDesignVoteTwoStream {
+@Configuration
+public class WebDesignVoteThreeStream {
 
 	@Bean
 	public KStream<String, WebDesignVoteMessage> kstreamWebDesignVote(StreamsBuilder builder) {
@@ -29,27 +29,28 @@ public class WebDesignVoteTwoStream {
 		// color
 		builder.stream("t.commodity.web.vote-color",
 				Consumed.with(stringSerde, colorSerde, new WebColorVoteTimestampExtractor(), null))
-				.mapValues(v -> v.getColor()).to("t.commodity.web.vote-two-username-color");
-		var colorTable = builder.table("t.commodity.web.vote-two-username-color",
+				.mapValues(v -> v.getColor()).to("t.commodity.web.vote-three-username-color");
+		var colorTable = builder.table("t.commodity.web.vote-three-username-color",
 				Consumed.with(stringSerde, stringSerde));
 
 		// layout
 		builder.stream("t.commodity.web.vote-layout",
 				Consumed.with(stringSerde, layoutSerde, new WebLayoutVoteTimestampExtractor(), null))
-				.mapValues(v -> v.getLayout()).to("t.commodity.web.vote-two-username-layout");
-		var layoutTable = builder.table("t.commodity.web.vote-two-username-layout",
+				.mapValues(v -> v.getLayout()).to("t.commodity.web.vote-three-username-layout");
+		var layoutTable = builder.table("t.commodity.web.vote-three-username-layout",
 				Consumed.with(stringSerde, stringSerde));
 
 		// join
-		var joinTable = colorTable.leftJoin(layoutTable, this::voteJoiner, Materialized.with(stringSerde, designSerde));
-		joinTable.toStream().to("t.commodity.web.vote-two-result");
+		var joinTable = colorTable.outerJoin(layoutTable, this::voteJoiner,
+				Materialized.with(stringSerde, designSerde));
+		joinTable.toStream().to("t.commodity.web.vote-three-result");
 
 		// vote result
 		joinTable.groupBy((username, votedDesign) -> KeyValue.pair(votedDesign.getColor(), votedDesign.getColor()))
-				.count().toStream().print(Printed.<String, Long>toSysOut().withLabel("Vote two - color"));
+				.count().toStream().print(Printed.<String, Long>toSysOut().withLabel("Vote three - color"));
 
 		joinTable.groupBy((username, votedDesign) -> KeyValue.pair(votedDesign.getLayout(), votedDesign.getLayout()))
-				.count().toStream().print(Printed.<String, Long>toSysOut().withLabel("Vote two - layout"));
+				.count().toStream().print(Printed.<String, Long>toSysOut().withLabel("Vote three - layout"));
 
 		return joinTable.toStream();
 	}
